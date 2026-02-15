@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* මේකෙන් තමයි වටේ තියෙන සුදු පාට border එක අයින් කරන්නේ */
+@layer base {
+  *, ::before, ::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #0a192f;
+    color: #d1d5db; /* text-gray-300 */
+    overflow-x: hidden;
+  }
+}
