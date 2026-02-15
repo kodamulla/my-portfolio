@@ -5,17 +5,16 @@ import { SiTailwindcss, SiMongodb, SiNodedotjs, SiExpress } from 'react-icons/si
 
 const Skills = () => {
   const techs = [
-    { id: 1, src: <FaHtml5 className="text-orange-500" />, title: 'HTML', style: 'border-orange-500/50' },
-    { id: 2, src: <FaCss3Alt className="text-blue-500" />, title: 'CSS', style: 'border-blue-500/50' },
-    { id: 3, src: <FaJsSquare className="text-yellow-500" />, title: 'JavaScript', style: 'border-yellow-500/50' },
-    { id: 4, src: <FaReact className="text-blue-400" />, title: 'React', style: 'border-blue-400/50' },
-    { id: 5, src: <SiTailwindcss className="text-sky-400" />, title: 'Tailwind', style: 'border-sky-400/50' },
-    { id: 6, src: <SiNodedotjs className="text-green-500" />, title: 'Node JS', style: 'border-green-500/50' },
-    { id: 7, src: <FaJava className="text-red-500" />, title: 'Java', style: 'border-red-500/50' },
-    { id: 8, src: <FaGithub className="text-white" />, title: 'GitHub', style: 'border-gray-400/50' },
+    { id: 1, src: <FaHtml5 className="text-orange-500" />, title: 'HTML', style: 'border-orange-500/50', shadow: 'hover:shadow-orange-500/20' },
+    { id: 2, src: <FaCss3Alt className="text-blue-500" />, title: 'CSS', style: 'border-blue-500/50', shadow: 'hover:shadow-blue-500/20' },
+    { id: 3, src: <FaJsSquare className="text-yellow-500" />, title: 'JavaScript', style: 'border-yellow-500/50', shadow: 'hover:shadow-yellow-500/20' },
+    { id: 4, src: <FaReact className="text-blue-400" />, title: 'React', style: 'border-blue-400/50', shadow: 'hover:shadow-blue-400/20' },
+    { id: 5, src: <SiTailwindcss className="text-sky-400" />, title: 'Tailwind', style: 'border-sky-400/50', shadow: 'hover:shadow-sky-400/20' },
+    { id: 6, src: <SiNodedotjs className="text-green-500" />, title: 'Node JS', style: 'border-green-500/50', shadow: 'hover:shadow-green-500/20' },
+    { id: 7, src: <FaJava className="text-red-500" />, title: 'Java', style: 'border-red-500/50', shadow: 'hover:shadow-red-500/20' },
+    { id: 8, src: <FaGithub className="text-white" />, title: 'GitHub', style: 'border-gray-400/50', shadow: 'hover:shadow-white/10' },
   ];
 
-  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -42,10 +41,11 @@ const Skills = () => {
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
+          className="mb-10"
         >
           <p className="text-4xl font-bold border-b-4 border-cyan-400 p-2 inline">SKILLS</p>
-          <p className="py-6 text-gray-400 tracking-wide font-mono">
-            These are the technologies I've been working with
+          <p className="py-6 text-gray-400 tracking-[0.2em] font-mono text-sm uppercase">
+            // My Technical Stack
           </p>
         </motion.div>
 
@@ -54,23 +54,25 @@ const Skills = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }} 
-          className="w-full grid grid-cols-2 sm:grid-cols-4 gap-8 text-center py-8 px-12 sm:px-0"
+          className="w-full grid grid-cols-2 sm:grid-cols-4 gap-10 text-center py-8 px-4 sm:px-0"
         >
-          {techs.map(({ id, src, title, style }) => (
+          {techs.map(({ id, src, title, style, shadow }) => (
             <motion.div
               key={id}
               variants={itemVariants}
               whileHover={{ 
-                scale: 1.05, 
-                backgroundColor: "rgba(17, 34, 64, 0.6)",
-                boxShadow: "0px 10px 30px -10px rgba(0,0,0,0.7)"
+                scale: 1.08, 
+                backgroundColor: "rgba(17, 34, 64, 0.8)",
               }}
-              className={`border-b-4 ${style} bg-[#112240] py-6 rounded-lg cursor-pointer duration-300 transition-all group`}
+              className={`relative border border-gray-700/50 ${style} bg-[#112240]/40 backdrop-blur-md py-8 rounded-2xl cursor-pointer duration-300 transition-all group shadow-xl ${shadow} hover:border-cyan-400/30`}
             >
-              <div className="text-6xl flex justify-center group-hover:scale-110 duration-300">
+              {/* Subtle background glow effect on hover */}
+              <div className="absolute inset-0 bg-cyan-400/5 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500" />
+              
+              <div className="text-6xl flex justify-center group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all duration-300">
                 {src}
               </div>
-              <p className="mt-4 font-bold text-gray-300 group-hover:text-white uppercase tracking-widest text-sm">
+              <p className="mt-5 font-semibold text-gray-400 group-hover:text-cyan-400 uppercase tracking-[0.15em] text-xs">
                 {title}
               </p>
             </motion.div>
