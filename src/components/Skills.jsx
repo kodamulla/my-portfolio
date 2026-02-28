@@ -1,83 +1,74 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaJava, FaPython, FaGithub } from 'react-icons/fa';
+import { FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaJava, FaPython, FaGithub, FaDatabase, FaGitAlt, FaCode } from 'react-icons/fa';
 import { SiTailwindcss, SiMongodb, SiNodedotjs, SiExpress } from 'react-icons/si';
 
 const Skills = () => {
-  const techs = [
-    { id: 1, src: <FaHtml5 className="text-orange-500" />, title: 'HTML', style: 'border-orange-500/50', shadow: 'hover:shadow-orange-500/20' },
-    { id: 2, src: <FaCss3Alt className="text-blue-500" />, title: 'CSS', style: 'border-blue-500/50', shadow: 'hover:shadow-blue-500/20' },
-    { id: 3, src: <FaJsSquare className="text-yellow-500" />, title: 'JavaScript', style: 'border-yellow-500/50', shadow: 'hover:shadow-yellow-500/20' },
-    { id: 4, src: <FaReact className="text-blue-400" />, title: 'React', style: 'border-blue-400/50', shadow: 'hover:shadow-blue-400/20' },
-    { id: 5, src: <SiTailwindcss className="text-sky-400" />, title: 'Tailwind', style: 'border-sky-400/50', shadow: 'hover:shadow-sky-400/20' },
-    { id: 6, src: <SiNodedotjs className="text-green-500" />, title: 'Node JS', style: 'border-green-500/50', shadow: 'hover:shadow-green-500/20' },
-    { id: 7, src: <FaJava className="text-red-500" />, title: 'Java', style: 'border-red-500/50', shadow: 'hover:shadow-red-500/20' },
-    { id: 8, src: <FaGithub className="text-white" />, title: 'GitHub', style: 'border-gray-400/50', shadow: 'hover:shadow-white/10' },
+  const row1Techs = [
+    { id: 1, src: <FaHtml5 className="text-orange-500" />, title: 'HTML' },
+    { id: 2, src: <FaCss3Alt className="text-blue-500" />, title: 'CSS' },
+    { id: 3, src: <FaJsSquare className="text-yellow-500" />, title: 'JavaScript' },
+    { id: 4, src: <FaReact className="text-blue-400" />, title: 'React' },
+    { id: 5, src: <SiTailwindcss className="text-sky-400" />, title: 'Tailwind' },
+    { id: 6, src: <FaPython className="text-blue-500" />, title: 'Python' },
+    { id: 7, src: <FaJava className="text-red-500" />, title: 'Java' },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1, 
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-    },
-  };
+  const row2Techs = [
+    { id: 8, src: <SiNodedotjs className="text-green-500" />, title: 'Node JS' },
+    { id: 9, src: <SiExpress className="text-gray-500" />, title: 'Express' },
+    { id: 10, src: <SiMongodb className="text-green-600" />, title: 'MongoDB' },
+    { id: 11, src: <FaDatabase className="text-slate-500" />, title: 'SQL' },
+    { id: 12, src: <FaCode className="text-purple-600" />, title: 'C#' },
+    { id: 13, src: <FaGitAlt className="text-orange-600" />, title: 'Git' },
+    { id: 14, src: <FaGithub className="text-slate-800" />, title: 'GitHub' },
+  ];
 
   return (
-    <div name="skills" className="bg-[#0a192f] w-full min-h-screen py-20">
-      <div className="max-w-screen-lg mx-auto p-4 flex flex-col justify-center w-full h-full text-white">
-        
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-10"
-        >
-          <p className="text-4xl font-bold border-b-4 border-cyan-400 p-2 inline">SKILLS</p>
-          <p className="py-6 text-gray-400 tracking-[0.2em] font-mono text-sm uppercase">
+    <div name="skills" className="bg-slate-50 w-full min-h-screen py-20 overflow-hidden flex items-center">
+      {/* දෙපැත්තෙන් ඉඩ වැඩි කළා md:px-28 */}
+      <div className="w-full px-8 md:px-28 mx-auto flex flex-col justify-center h-full text-slate-800">
+        <div className="mb-10 text-center sm:text-left">
+          <p className="text-4xl font-bold border-b-4 border-blue-500 p-2 inline text-slate-800">SKILLS</p>
+          <p className="py-6 text-slate-500 tracking-[0.2em] font-mono text-sm uppercase">
             // My Technical Stack
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }} 
-          className="w-full grid grid-cols-2 sm:grid-cols-4 gap-10 text-center py-8 px-4 sm:px-0"
-        >
-          {techs.map(({ id, src, title, style, shadow }) => (
-            <motion.div
-              key={id}
-              variants={itemVariants}
-              whileHover={{ 
-                scale: 1.08, 
-                backgroundColor: "rgba(17, 34, 64, 0.8)",
-              }}
-              className={`relative border border-gray-700/50 ${style} bg-[#112240]/40 backdrop-blur-md py-8 rounded-2xl cursor-pointer duration-300 transition-all group shadow-xl ${shadow} hover:border-cyan-400/30`}
+        <div className="flex flex-col gap-10 w-full mt-4 overflow-hidden">
+          <div className="relative flex w-full overflow-hidden">
+            <motion.div 
+              className="flex gap-12 whitespace-nowrap"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
+              style={{ width: "max-content" }}
             >
-              {/* Subtle background glow effect on hover */}
-              <div className="absolute inset-0 bg-cyan-400/5 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500" />
-              
-              <div className="text-6xl flex justify-center group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all duration-300">
-                {src}
-              </div>
-              <p className="mt-5 font-semibold text-gray-400 group-hover:text-cyan-400 uppercase tracking-[0.15em] text-xs">
-                {title}
-              </p>
+              {[...row1Techs, ...row1Techs].map((tech, index) => (
+                // අයිකන් සහ කොටුව පොඩි කළා w-24 h-24
+                <div key={index} className="w-24 h-24 flex flex-col justify-center items-center hover:scale-110 duration-300 transition-transform cursor-pointer">
+                  <div className="text-6xl mb-3 drop-shadow-md">{tech.src}</div>
+                  <p className="font-bold text-slate-600 uppercase tracking-wider text-xs">{tech.title}</p>
+                </div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+          </div>
+
+          <div className="relative flex w-full overflow-hidden">
+            <motion.div 
+              className="flex gap-12 whitespace-nowrap"
+              animate={{ x: ["-50%", "0%"] }}
+              transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
+              style={{ width: "max-content" }}
+            >
+              {[...row2Techs, ...row2Techs].map((tech, index) => (
+                <div key={index} className="w-24 h-24 flex flex-col justify-center items-center hover:scale-110 duration-300 transition-transform cursor-pointer">
+                  <div className="text-6xl mb-3 drop-shadow-md">{tech.src}</div>
+                  <p className="font-bold text-slate-600 uppercase tracking-wider text-xs">{tech.title}</p>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   );

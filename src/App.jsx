@@ -4,6 +4,7 @@ import Skills from "./components/Skills";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Projects from "./components/Projects";
+import Footer from "./components/Footer";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import { BsFillPersonLinesFill } from "react-icons/bs";
@@ -54,6 +55,7 @@ function App() {
       <Skills />
       <Projects />
       <Contact />
+      <Footer/>
 
       
     </div>

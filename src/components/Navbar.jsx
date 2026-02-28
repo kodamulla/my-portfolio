@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 import { Link } from 'react-scroll'; 
-import ResumePDF from '../assets/Hansi_Resume.pdf';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -15,35 +15,37 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed w-full h-20 bg-[#0a192f]/90 backdrop-blur-md text-gray-300 px-6 z-50 border-b border-gray-800 shadow-lg">
-      <div className="max-w-screen-xl mx-auto flex justify-between items-center h-full">
+    <nav className="fixed w-full h-20 bg-white/90 backdrop-blur-md text-slate-800 px-6 z-50 border-b border-gray-100 shadow-sm">
+      <div className="w-full mx-auto flex justify-between items-center h-full px-4 md:px-12">
         
         <div className="group cursor-pointer">
           <Link to="home" smooth={true} duration={500}>
-            <h1 className="text-2xl font-bold uppercase tracking-widest text-cyan-400">
+            <h1 className="text-2xl font-bold uppercase tracking-widest text-blue-600">
               HANSI.K
             </h1>
           </Link>
         </div>
 
-       
+        {/* Desktop Menu */}
         <ul className="hidden md:flex items-center">
           {links.map(({ id, link, to }) => (
-            <li key={id} className="px-4 cursor-pointer font-medium text-gray-400 hover:text-cyan-400 duration-300 group">
+            <li key={id} className="px-4 cursor-pointer font-bold text-slate-600 hover:text-blue-600 duration-300 group relative">
               <Link to={to} smooth={true} duration={500} offset={-80}>
                 {link}
               </Link>
-              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute bottom-[-4px] left-4 w-0 h-[3px] rounded-full bg-blue-600 transition-all duration-300 group-hover:w-[calc(100%-2rem)]"></span>
             </li>
           ))}
           
-<a href={ResumePDF} download="Hansi_Kodamulla_Resume.pdf">
-  <button className="ml-8 px-5 py-2 border border-cyan-400 text-cyan-400 rounded-full hover:bg-cyan-400 hover:text-[#0a192f] duration-300 font-semibold text-sm">
-    Resume
-  </button>
-</a>
+          <div className="flex items-center ml-6 border-l-2 border-slate-200 pl-6 gap-4">
+            <a href="https://github.com/kodamulla" target="_blank" rel="noreferrer" className="text-slate-600 hover:text-blue-600 duration-300">
+              <FaGithub size={24} />
+            </a>
+            <a href="https://linkedin.com/in/oyage-linkedin-link-eka" target="_blank" rel="noreferrer" className="text-slate-600 hover:text-blue-600 duration-300">
+              <FaLinkedin size={24} />
+            </a>
+          </div>
         </ul>
-
       </div>
     </nav>
   );
