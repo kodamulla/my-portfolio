@@ -1,9 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaTimes, FaCheckCircle } from 'react-icons/fa';
-import icomImg from '../assets/icom.jpg';
-import carImg from '../assets/car.jpg';
-import jewelImg from '../assets/jewel.jpg';
+
+// 👇 ඔයාගේ assets ෆෝල්ඩරයේ තියෙන නම් වලට හරියටම ගැලපෙන්න Import කරලා තියෙන්නේ
+import voting1 from '../assets/voting d-app 1.png';
+import voting2 from '../assets/voting d-app 2.png';
+
+import flavor1 from '../assets/flavor town 1.png';
+import flavor2 from '../assets/flavor town 2.png';
+import flavor3 from '../assets/flavor town3.png';
 
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -30,7 +35,8 @@ const Projects = () => {
     {
       id: 1,
       title: 'Online Voting D-App',
-      images: [icomImg, carImg, jewelImg], // Update with real images
+      // 👇 Voting app එකේ පින්තූර
+      images: [voting1, voting2], 
       description: 'Decentralised online voting platform to hold secure elections.',
       techStack: ["Next.js", "Ethereum", "Solidity", "Hardhat"],
       keyFeatures: [
@@ -44,7 +50,8 @@ const Projects = () => {
     {
       id: 2,
       title: 'Flavor Town',
-      images: [carImg, jewelImg, icomImg], // Update with real images
+      // 👇 Flavor Town එකේ පින්තූර 3ම
+      images: [flavor1, flavor2, flavor3], 
       description: 'A comprehensive full-stack application featuring a robust security architecture.',
       techStack: ['MongoDB', 'Express', 'React', 'Node.js'],
       keyFeatures: [
@@ -58,7 +65,8 @@ const Projects = () => {
     {
       id: 3,
       title: 'i-Computers',
-      images: [jewelImg, icomImg, carImg], 
+      // තාවකාලිකව දාලා තියෙන්නේ. පස්සේ අලුත් පින්තූර import කරලා මෙතනට දෙන්න
+      images: [flavor1, voting1], 
       description: 'A fully functional E-commerce site for a computer hardware shop with hosting.',
       techStack: ['MongoDB', 'Express', 'React', 'Node.js'],
       keyFeatures: [
@@ -72,7 +80,7 @@ const Projects = () => {
     {
       id: 4,
       title: 'Car Service Management',
-      images: [carImg, icomImg, jewelImg], 
+      images: [voting1, flavor2], // තාවකාලික පින්තූර
       description: 'A C# .NET solution to manage vehicle records, schedules, and service histories.',
       techStack: ['C#', '.NET Framework', 'SQL Server'],
       keyFeatures: [
@@ -86,7 +94,7 @@ const Projects = () => {
     {
       id: 5,
       title: 'Jewel-Aura',
-      images: [jewelImg, carImg, icomImg], 
+      images: [flavor3, voting2], // තාවකාලික පින්තූර
       description: 'Web application for buying and selling gold jewelry.',
       techStack: ['HTML', 'CSS', 'JavaScript'],
       keyFeatures: [
@@ -109,7 +117,6 @@ const Projects = () => {
 
   return (
     <div name="projects" className="w-full md:min-h-screen text-slate-800 bg-white py-20 overflow-hidden relative">
-      {/* දෙපැත්තෙන් ඉඩ වැඩි කළා md:px-24 */}
       <div className="w-full px-8 md:px-24 mx-auto flex flex-col justify-center h-full">
         <div className="pb-8 text-center sm:text-left">
           <p className="text-4xl font-bold inline border-b-4 text-slate-800 border-blue-500 uppercase">Projects</p>
@@ -126,14 +133,13 @@ const Projects = () => {
               <motion.div
                 key={item.id}
                 onClick={() => setSelectedProject(item)}
-                // කාඩ් එකේ සයිස් එක පොඩි කළා min-w-[340px]
                 className="min-w-[300px] md:min-w-[360px] rounded-xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl flex flex-col pointer-events-auto cursor-pointer transition-all duration-300 transform hover:-translate-y-2"
               >
                 <div className="h-48 overflow-hidden relative bg-gray-100">
                   <img 
                     src={item.images[0]} 
                     alt={item.title} 
-                    className="w-full h-full object-cover pointer-events-none"
+                    className="w-full h-full object-cover pointer-events-none object-top"
                   />
                 </div>
                 <div className="p-5 flex flex-col flex-grow">
@@ -151,7 +157,6 @@ const Projects = () => {
         </motion.div>
       </div>
 
-      {/* Pop-up Modal with New Design */}
       {selectedProject && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex justify-center items-center p-4">
           <motion.div 
@@ -166,11 +171,11 @@ const Projects = () => {
               <FaTimes />
             </button>
             
-            <div className="relative w-full h-56 sm:h-72 bg-gray-100 rounded-xl overflow-hidden mb-6 group">
+            <div className="relative w-full h-56 sm:h-72 bg-gray-100 rounded-xl overflow-hidden mb-6 group border border-gray-200">
               <img 
                 src={selectedProject.images[currentImageIndex]} 
                 alt="Project Screenshot" 
-                className="w-full h-full object-cover transition-all duration-500" 
+                className="w-full h-full object-contain bg-white transition-all duration-500" 
               />
               
               <button 
