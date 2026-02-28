@@ -2,13 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaTimes, FaCheckCircle } from 'react-icons/fa';
 
-// 👇 ඔයාගේ assets ෆෝල්ඩරයේ තියෙන නම් වලට හරියටම ගැලපෙන්න Import කරලා තියෙන්නේ
 import voting1 from '../assets/voting d-app 1.png';
 import voting2 from '../assets/voting d-app 2.png';
 
 import flavor1 from '../assets/flavor town 1.png';
 import flavor2 from '../assets/flavor town 2.png';
 import flavor3 from '../assets/flavor town3.png';
+
+// 👇 i-Computers වලට අදාළ පින්තූර 4ම හරියටම import කරලා තියෙන්නේ
+import icomputers1 from '../assets/i-computers 1.png';
+import icomputers2 from '../assets/i-computers 2.png';
+import icomputers3 from '../assets/i-computers 3.png';
+import icomputers4 from '../assets/i-computers 4.png';
 
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -35,7 +40,6 @@ const Projects = () => {
     {
       id: 1,
       title: 'Online Voting D-App',
-      // 👇 Voting app එකේ පින්තූර
       images: [voting1, voting2], 
       description: 'Decentralised online voting platform to hold secure elections.',
       techStack: ["Next.js", "Ethereum", "Solidity", "Hardhat"],
@@ -50,7 +54,6 @@ const Projects = () => {
     {
       id: 2,
       title: 'Flavor Town',
-      // 👇 Flavor Town එකේ පින්තූර 3ම
       images: [flavor1, flavor2, flavor3], 
       description: 'A comprehensive full-stack application featuring a robust security architecture.',
       techStack: ['MongoDB', 'Express', 'React', 'Node.js'],
@@ -65,8 +68,8 @@ const Projects = () => {
     {
       id: 3,
       title: 'i-Computers',
-      // තාවකාලිකව දාලා තියෙන්නේ. පස්සේ අලුත් පින්තූර import කරලා මෙතනට දෙන්න
-      images: [flavor1, voting1], 
+      // 👇 i-Computers පින්තූර 4ම මෙතනට දැම්මා
+      images: [icomputers1, icomputers2, icomputers3, icomputers4], 
       description: 'A fully functional E-commerce site for a computer hardware shop with hosting.',
       techStack: ['MongoDB', 'Express', 'React', 'Node.js'],
       keyFeatures: [
@@ -80,7 +83,7 @@ const Projects = () => {
     {
       id: 4,
       title: 'Car Service Management',
-      images: [voting1, flavor2], // තාවකාලික පින්තූර
+      images: [voting1, flavor2], // තවම තාවකාලික පින්තූර
       description: 'A C# .NET solution to manage vehicle records, schedules, and service histories.',
       techStack: ['C#', '.NET Framework', 'SQL Server'],
       keyFeatures: [
@@ -94,7 +97,7 @@ const Projects = () => {
     {
       id: 5,
       title: 'Jewel-Aura',
-      images: [flavor3, voting2], // තාවකාලික පින්තූර
+      images: [flavor3, voting2], // තවම තාවකාලික පින්තූර
       description: 'Web application for buying and selling gold jewelry.',
       techStack: ['HTML', 'CSS', 'JavaScript'],
       keyFeatures: [
