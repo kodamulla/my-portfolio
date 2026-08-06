@@ -1,53 +1,223 @@
-import React, { useState } from 'react';
-import { HiMenuAlt3, HiX } from 'react-icons/hi';
-import { Link } from 'react-scroll'; 
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-scroll';
+import {
+  FiDownload,
+  FiGithub,
+  FiLinkedin,
+  FiMenu,
+  FiX,
+} from 'react-icons/fi';
+import { site, navLinks, NAV_OFFSET } from '../data/site';
+import Container from './ui/Container';
+import cx from '../lib/cx';
+
+const socials = [
+  {
+    id: 'github',
+    label: 'GitHub',
+    href: site.socials.github,
+    Icon: FiGithub,
+    external: true,
+  },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    href: site.socials.linkedin,
+    Icon: FiLinkedin,
+    external: true,
+  },
+  {
+    id: 'download',
+    label: 'Download Resume',
+    href: site.resume.href,
+    Icon: FiDownload,
+    download: site.resume.downloadAs,
+    external: false,
+  },
+];
 
 const Navbar = () => {
-  const [nav, setNav] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const links = [
-    { id: 1, link: 'Home', to: 'home' },
-    { id: 2, link: 'About', to: 'about' },
-    { id: 3, link: 'Skills', to: 'skills' },
-    { id: 4, link: 'Projects', to: 'projects' },
-    { id: 5, link: 'Contact', to: 'contact' },
-  ];
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+
+    window.addEventListener('keydown', onKeyDown);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   return (
-    <nav className="fixed w-full h-20 bg-white/90 backdrop-blur-md text-slate-800 px-6 z-50 border-b border-gray-100 shadow-sm">
-      <div className="w-full mx-auto flex justify-between items-center h-full px-4 md:px-12">
-        
-        <div className="group cursor-pointer">
-          <Link to="home" smooth={true} duration={500}>
-            <h1 className="text-2xl font-bold uppercase tracking-widest text-blue-600">
-              HANSI.K
-            </h1>
-          </Link>
-        </div>
+    <header
+      className={cx(
+        'fixed inset-x-0 top-0 z-50 h-20 transition-colors duration-300',
+        scrolled || open
+          ? 'border-b border-line bg-bg/80 backdrop-blur-xl'
+          : 'border-b border-transparent',
+      )}
+    >
+      <Container className="flex h-20 items-center justify-between">
+        <Link
+          to="home"
+          smooth
+          duration={500}
+          onClick={() => setOpen(false)}
+          className="group inline-flex cursor-pointer items-center gap-2.5"
+        >
+          <span className="font-display text-base font-semibold tracking-tight text-fg">
+            {site.name}
+          </span>
+        </Link>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex items-center">
-          {links.map(({ id, link, to }) => (
-            <li key={id} className="px-4 cursor-pointer font-bold text-slate-600 hover:text-blue-600 duration-300 group relative">
-              <Link to={to} smooth={true} duration={500} offset={-80}>
-                {link}
-              </Link>
-              <span className="absolute bottom-[-4px] left-4 w-0 h-[3px] rounded-full bg-blue-600 transition-all duration-300 group-hover:w-[calc(100%-2rem)]"></span>
-            </li>
+        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+          {navLinks.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              smooth
+              spy
+              duration={500}
+              offset={NAV_OFFSET}
+              activeClass="text-fg bg-surface-hover"
+              className="cursor-pointer rounded-lg px-3.5 py-2 text-sm font-medium text-fg-muted transition-colors duration-200 hover:text-fg"
+            >
+              {label}
+            </Link>
           ))}
-          
-          <div className="flex items-center ml-6 border-l-2 border-slate-200 pl-6 gap-4">
-            <a href="https://github.com/kodamulla" target="_blank" rel="noreferrer" className="text-slate-600 hover:text-blue-600 duration-300">
-              <FaGithub size={24} />
-            </a>
-            <a href="https://linkedin.com/in/oyage-linkedin-link-eka" target="_blank" rel="noreferrer" className="text-slate-600 hover:text-blue-600 duration-300">
-              <FaLinkedin size={24} />
-            </a>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-1 sm:flex">
+            {socials.map(
+              ({
+                id,
+                label,
+                href,
+                Icon,
+                external,
+                download,
+              }) => (
+                <a
+                  key={id}
+                  href={href}
+                  aria-label={label}
+                  title={label}
+                  {...(external
+                    ? {
+                        target: '_blank',
+                        rel: 'noreferrer',
+                      }
+                    : {
+                        download,
+                      })}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-fg-muted transition-colors duration-200 hover:bg-surface-hover hover:text-fg"
+                >
+                  <Icon size={18} />
+                </a>
+              ),
+            )}
           </div>
-        </ul>
-      </div>
-    </nav>
+
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line text-fg-muted transition-colors duration-200 hover:bg-surface-hover hover:text-fg md:hidden"
+          >
+            {open ? <FiX size={18} /> : <FiMenu size={18} />}
+          </button>
+        </div>
+      </Container>
+
+      {open && (
+        <>
+          <div
+            className="fixed inset-x-0 top-20 bottom-0 bg-slate-950/40 md:hidden"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+
+          <div
+            id="mobile-menu"
+            className="absolute inset-x-0 top-20 max-h-[calc(100dvh-5rem)] overflow-y-auto border-b border-line bg-bg shadow-card md:hidden"
+          >
+            <Container className="py-3">
+              <nav aria-label="Mobile" className="flex flex-col">
+                {navLinks.map(({ to, label }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    smooth
+                    duration={500}
+                    offset={NAV_OFFSET}
+                    onClick={() => setOpen(false)}
+                    className="cursor-pointer rounded-lg px-3 py-3.5 text-base font-medium text-fg-muted transition-colors duration-200 hover:bg-surface-hover hover:text-fg"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+
+              <div className="mt-2 flex items-center gap-1 border-t border-line pt-3">
+                {socials.map(
+                  ({
+                    id,
+                    label,
+                    href,
+                    Icon,
+                    external,
+                    download,
+                  }) => (
+                    <a
+                      key={id}
+                      href={href}
+                      aria-label={label}
+                      title={label}
+                      onClick={() => setOpen(false)}
+                      {...(external
+                        ? {
+                            target: '_blank',
+                            rel: 'noreferrer',
+                          }
+                        : {
+                            download,
+                          })}
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-fg-muted transition-colors duration-200 hover:bg-surface-hover hover:text-fg"
+                    >
+                      <Icon size={20} />
+                    </a>
+                  ),
+                )}
+              </div>
+            </Container>
+          </div>
+        </>
+      )}
+    </header>
   );
 };
 

@@ -1,244 +1,411 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FaChevronLeft, FaChevronRight, FaTimes, FaCheckCircle } from 'react-icons/fa';
+import { useEffect, useRef, useState } from 'react';
+import { FiArrowRight, FiChevronLeft, FiChevronRight, FiExternalLink, FiGithub } from 'react-icons/fi';
+import { projects } from '../data/projects';
+import Section from './ui/Section';
+import SectionHeading from './ui/SectionHeading';
+import Card from './ui/Card';
+import Tag from './ui/Tag';
+import Button from './ui/Button';
+import Modal from './ui/Modal';
+import Reveal from './ui/Reveal';
+import cx from '../lib/cx';
 
-import voting1 from '../assets/voting d-app 1.png';
-import voting2 from '../assets/voting d-app 2.png';
+/**
+ * Resolves a project's declared image slots to the URLs that can actually be
+ * shown. A slot whose public file is missing falls back to its bundled image;
+ * a slot with neither is dropped, so the counter and arrows never page onto a
+ * blank frame.
+ *
+ * @param {{src: string, label: string, fallback?: string}[]} images
+ * @param {Set<string> | null} missing  Probed missing paths, or null while probing.
+ */
+const resolveImages = (images, missing) =>
+  images
+    .map((image) => ({
+      ...image,
+      // Before the probe resolves, only bundled fallbacks are known-good.
+      url: missing === null
+        ? image.fallback
+        : missing.has(image.src)
+          ? image.fallback
+          : image.src,
+    }))
+    .filter((image) => Boolean(image.url));
 
-import flavor1 from '../assets/flavor town 1.png';
-import flavor2 from '../assets/flavor town 2.png';
-import flavor3 from '../assets/flavor town3.png';
+/** Shared styling for the labelled blocks inside the project dialog. */
+const SECTION_LABEL = 'font-mono text-xs font-medium tracking-[0.16em] text-fg-subtle uppercase';
 
-import icomputers1 from '../assets/i-computers 1.png';
-import icomputers2 from '../assets/i-computers 2.png';
-import icomputers3 from '../assets/i-computers 3.png';
-import icomputers4 from '../assets/i-computers 4.png';
+/** A pointer travel beyond this is a drag, not a tap on a card. */
+const DRAG_THRESHOLD = 5;
 
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [width, setWidth] = useState(0);
-  const carousel = useRef();
+  const [missingImages, setMissingImages] = useState(null);
 
+  const scroller = useRef(null);
+  const drag = useRef({ moved: 0 });
+
+  // Probe which public screenshots have actually been added. HEAD requests do
+  // not download image bytes, so this does not defeat lazy loading.
   useEffect(() => {
-    const updateWidth = () => {
-      if(carousel.current){
-        setWidth(carousel.current.scrollWidth - carousel.current.offsetWidth);
-      }
-    }
-    updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
+    const sources = [...new Set(projects.flatMap((p) => p.images.map((i) => i.src)))];
+    let cancelled = false;
+
+    Promise.all(
+      sources.map(async (src) => {
+        try {
+          const res = await fetch(src, { method: 'HEAD' });
+          // A dev server may answer unknown paths with an SPA fallback, so
+          // require an image content type rather than trusting the status code.
+          const type = res.headers.get('content-type') || '';
+          return res.ok && type.startsWith('image/') ? null : src;
+        } catch {
+          return src;
+        }
+      }),
+    ).then((results) => {
+      if (!cancelled) setMissingImages(new Set(results.filter(Boolean)));
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  useEffect(() => {
-    if (selectedProject) setCurrentImageIndex(0);
-  }, [selectedProject]);
+  // Marks a slot missing if it 404s or decodes badly despite the probe.
+  const handleImageError = (src) => {
+    setMissingImages((prev) => {
+      if (prev?.has(src)) return prev;
+      const next = new Set(prev ?? []);
+      next.add(src);
+      return next;
+    });
+  };
 
-  const projects = [
-    {
-      id: 1,
-      title: 'Online Voting D-App',
-      images: [voting1, voting2], 
-      description: 'Decentralised online voting platform to hold secure elections.',
-      techStack: ["Next.js", "Ethereum", "Solidity", "Hardhat"],
-      keyFeatures: [
-        "Voters are authenticated using their unique addresses and are given permission to vote.",
-        "Fully responsive design that adapts to all screen sizes and devices.",
-        "Sensitive data like images are stored using IPFS, ensuring no single point of failure."
-      ],
-      link: '#',
-      repo: '#',
-    },
-    {
-      id: 2,
-      title: 'Flavor Town',
-      images: [flavor1, flavor2, flavor3], 
-      description: 'A comprehensive full-stack application featuring a robust security architecture.',
-      techStack: ['MongoDB', 'Express', 'React', 'Node.js'],
-      keyFeatures: [
-        "Implemented a complete frontend and backend authentication and authorization system.",
-        "Secure user sessions and role-based access control.",
-        "Interactive and modern user interface design."
-      ],
-      link: '#',
-      repo: '#',
-    },
-    {
-      id: 3,
-      title: 'i-Computers',
-      images: [icomputers1, icomputers2, icomputers3, icomputers4], 
-      description: 'A fully functional E-commerce site for a computer hardware shop with hosting.',
-      techStack: ['MongoDB', 'Express', 'React', 'Node.js'],
-      keyFeatures: [
-        "Integrated secure payment gateways for safe transactions.",
-        "User authentication and profile management.",
-        "Dynamic shopping cart and product filtering."
-      ],
-      link: 'https://icomputers-link.com',
-      repo: '#',
-    },
-    {
-      id: 4,
-      title: 'Car Service Management',
-      images: [voting1, flavor2], 
-      description: 'A C# .NET solution to manage vehicle records, schedules, and service histories.',
-      techStack: ['C#', '.NET Framework', 'SQL Server'],
-      keyFeatures: [
-        "Comprehensive inventory management and tracking.",
-        "Automated service scheduling and reminders.",
-        "Detailed reporting and history logs."
-      ],
-      link: '#',
-      repo: '#',
-    },
-    {
-      id: 5,
-      title: 'Jewel-Aura',
-      images: [flavor3, voting2], 
-      description: 'Web application for buying and selling gold jewelry.',
-      techStack: ['HTML', 'CSS', 'JavaScript'],
-      keyFeatures: [
-        "Modern and elegant UI tailored for jewelry display.",
-        "Interactive About Us and Terms & Conditions pages.",
-        "Responsive design for mobile and desktop viewing."
-      ],
-      link: '#',
-      repo: '#',
+  /**
+   * Click-and-drag scrolling for pointing devices. Touch is left to the
+   * browser, whose momentum and snapping are better than anything replicated
+   * here. Snapping is suspended mid-drag because a mandatory snap fights
+   * scrollLeft being written on every move.
+   */
+  const handlePointerDown = (event) => {
+    drag.current.moved = 0;
+    if (event.pointerType === 'touch') return;
+
+    const el = scroller.current;
+    if (!el) return;
+
+    const startX = event.clientX;
+    const startScroll = el.scrollLeft;
+    const previousSnap = el.style.scrollSnapType;
+
+    el.style.scrollSnapType = 'none';
+    el.classList.add('cursor-grabbing', 'select-none');
+
+    const onMove = (moveEvent) => {
+      const dx = moveEvent.clientX - startX;
+      drag.current.moved = Math.max(drag.current.moved, Math.abs(dx));
+      el.scrollLeft = startScroll - dx;
+    };
+
+    const onUp = () => {
+      el.style.scrollSnapType = previousSnap;
+      el.classList.remove('cursor-grabbing', 'select-none');
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+  };
+
+  const openProject = (project) => {
+    // Ignore the click that ends a drag.
+    if (drag.current.moved > DRAG_THRESHOLD) {
+      drag.current.moved = 0;
+      return;
     }
-  ];
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % selectedProject.images.length);
+    setCurrentImageIndex(0);
+    setSelectedProject(project);
   };
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + selectedProject.images.length) % selectedProject.images.length);
-  };
+  const modalImages = selectedProject ? resolveImages(selectedProject.images, missingImages) : [];
+  const imageCount = modalImages.length;
+  // The list can shrink while open if a probe or load fails, so clamp.
+  const safeIndex = imageCount > 0 ? Math.min(currentImageIndex, imageCount - 1) : 0;
+  const currentImage = modalImages[safeIndex];
+
+  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % imageCount);
+  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + imageCount) % imageCount);
+
+  // Arrow keys page through screenshots while the dialog is open.
+  useEffect(() => {
+    if (!selectedProject || imageCount < 2) return;
+
+    const onKeyDown = (event) => {
+      if (event.key === 'ArrowRight') nextImage();
+      if (event.key === 'ArrowLeft') prevImage();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProject, imageCount]);
 
   return (
-    <div name="projects" className="w-full md:min-h-screen text-slate-800 bg-white py-20 overflow-hidden relative">
-      <div className="w-full px-8 md:px-24 mx-auto flex flex-col justify-center h-full">
-        <div className="pb-8 text-center sm:text-left">
-          <p className="text-4xl font-bold inline border-b-4 text-slate-800 border-blue-500 uppercase">Projects</p>
-          <p className="py-6 italic text-slate-500">Drag to explore and click anywhere on the card for details</p>
-        </div>
-
-        <motion.div ref={carousel} className="cursor-grab overflow-hidden w-full" whileTap={{ cursor: "grabbing" }}>
-          <motion.div 
-            drag="x" 
-            dragConstraints={{ right: 0, left: -width }} 
-            className="flex gap-6 py-4"
-          >
-            {projects.map((item) => (
-              <motion.div
-                key={item.id}
-                onClick={() => setSelectedProject(item)}
-                className="min-w-[300px] md:min-w-[360px] rounded-xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl flex flex-col pointer-events-auto cursor-pointer transition-all duration-300 transform hover:-translate-y-2"
-              >
-                <div className="h-48 overflow-hidden relative bg-gray-100">
-                  <img 
-                    src={item.images[0]} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover pointer-events-none object-top"
-                  />
-                </div>
-                <div className="p-5 flex flex-col flex-grow">
-                  <span className="text-xl font-bold text-slate-800 tracking-wider mb-2">
-                    {item.title}
-                  </span>
-                  <p className="text-sm text-slate-500 line-clamp-2">{item.description}</p>
-                  <div className="mt-4 pt-3 border-t border-gray-100 text-blue-600 font-semibold text-sm">
-                    View full details &rarr;
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
+    <Section id="projects" className="bg-bg-subtle" containerClassName="max-w-none px-0">
+      <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-6 lg:px-8 xl:px-10">
+        <SectionHeading
+          eyebrow="Projects"
+          title="Selected work"
+          description="A few of the things I have designed, built and shipped. Drag or swipe to explore."
+        />
       </div>
 
-      {/* 👇 අලුත් ලස්සන, පොඩි කරපු Pop-up Modal එක */}
-      {selectedProject && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-center items-center p-4 sm:p-6">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            // max-w-[600px] කරලා සයිස් එක පොඩි කළා, rounded-3xl දැම්මා
-            className="bg-white max-w-[600px] w-full rounded-3xl p-6 sm:p-8 relative shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar"
+      <Reveal className="mt-14">
+        {/* The outer wrapper clips the viewport cleanly, while the inner list
+            keeps the existing native scroll, drag, momentum and snap logic. */}
+        <div className="mx-auto w-full max-w-[1440px] overflow-hidden px-5 sm:px-6 lg:px-8 xl:px-10">
+          <ul
+            ref={scroller}
+            tabIndex={0}
+            aria-label="Projects, scroll horizontally"
+            onPointerDown={handlePointerDown}
+            className={cx(
+              'no-scrollbar flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain py-2',
+              'scroll-px-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring',
+            )}
           >
-            {/* ලස්සන කරපු Close Button එක */}
-            <button 
-              className="absolute top-4 right-4 bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-500 text-lg z-10 transition-colors duration-300 rounded-full p-2.5 shadow-sm"
-              onClick={() => setSelectedProject(null)}
-            >
-              <FaTimes />
-            </button>
-            
-            {/* Image Container එකේ උස පොඩි කළා */}
-            <div className="relative w-full h-48 sm:h-64 bg-slate-50 rounded-2xl overflow-hidden mb-6 group border border-slate-100 shadow-inner">
-              <img 
-                src={selectedProject.images[currentImageIndex]} 
-                alt="Project Screenshot" 
-                className="w-full h-full object-contain bg-white transition-all duration-500" 
-              />
-              
-              <button 
-                onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-800 p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          {projects.map((project) => {
+            const cover = resolveImages(project.images, missingImages)[0];
+
+            return (
+              <li
+                key={project.id}
+                // Cards fill the visible row exactly: one on mobile, two on
+                // tablet and three on desktop. Mandatory snap prevents a card
+                // from remaining half-visible after dragging.
+                className="flex w-full shrink-0 snap-start sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]"
               >
-                <FaChevronLeft size={14} />
-              </button>
-              <button 
-                onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-800 p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              >
-                <FaChevronRight size={14} />
-              </button>
+                <Card interactive className="group relative flex w-full flex-col overflow-hidden">
+                  <div className="relative aspect-16/10 overflow-hidden bg-bg-subtle">
+                    {cover && (
+                      <img
+                        src={cover.url}
+                        alt={`${project.title} — ${cover.label}`}
+                        loading="lazy"
+                        draggable="false"
+                        onError={() => handleImageError(cover.src)}
+                        className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                    )}
+                  </div>
+
+                  <div className="flex flex-1 flex-col p-5">
+                    <p className="font-mono text-[11px] font-medium tracking-tight text-primary">
+                      {project.category}
+                    </p>
+                    <h3 className="mt-2 font-display text-lg font-semibold text-fg">
+                      {project.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-fg-muted">
+                      {project.description}
+                    </p>
+
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {project.techStack.slice(0, 3).map((tech) => (
+                        <Tag key={tech}>{tech}</Tag>
+                      ))}
+                      {project.techStack.length > 3 && (
+                        <Tag tone="primary">+{project.techStack.length - 3}</Tag>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => openProject(project)}
+                      className="mt-5 inline-flex cursor-pointer items-center gap-1.5 self-start border-t border-transparent pt-4 text-sm font-medium text-primary transition-colors duration-200 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    >
+                      {/* Stretches the hit area to the whole card while keeping
+                          a single, properly labelled control for the keyboard. */}
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      View details
+                      <FiArrowRight
+                        size={15}
+                        className="transition-transform duration-200 group-hover:translate-x-0.5"
+                      />
+                      <span className="sr-only">for {project.title}</span>
+                    </button>
+                  </div>
+                </Card>
+              </li>
+            );
+          })}
+          </ul>
+        </div>
+      </Reveal>
+
+      <Modal
+        open={Boolean(selectedProject)}
+        onClose={() => setSelectedProject(null)}
+        title={selectedProject?.title ?? ''}
+        maxWidth="max-w-6xl"
+        className="lg:h-[86dvh]"
+      >
+        {selectedProject && (
+          // Stacked and page-scrolling on mobile; two independent columns on
+          // large screens, where only the details side scrolls.
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
+            {/* ---------- Left: gallery ---------- */}
+            <div className="flex shrink-0 flex-col border-b border-line bg-bg-subtle lg:w-[55%] lg:border-r lg:border-b-0">
+              {currentImage ? (
+                <>
+                  <div className="group relative aspect-16/10 w-full lg:aspect-auto lg:min-h-0 lg:flex-1">
+                    <img
+                      src={currentImage.url}
+                      alt={`${selectedProject.title} — ${currentImage.label} (${safeIndex + 1} of ${imageCount})`}
+                      onError={() => handleImageError(currentImage.src)}
+                      className="absolute inset-0 h-full w-full object-contain"
+                    />
+
+                    {imageCount > 1 && (
+                      <>
+                        {/* Always visible on touch, where there is no hover. */}
+                        <button
+                          type="button"
+                          aria-label="Previous screenshot"
+                          onClick={prevImage}
+                          className="absolute top-1/2 left-3 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/90 text-fg backdrop-blur transition duration-200 hover:bg-surface md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+                        >
+                          <FiChevronLeft size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Next screenshot"
+                          onClick={nextImage}
+                          className="absolute top-1/2 right-3 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/90 text-fg backdrop-blur transition duration-200 hover:bg-surface md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+                        >
+                          <FiChevronRight size={18} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {imageCount > 1 && (
+                    <div className="flex shrink-0 items-center justify-center gap-3 border-t border-line px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        {modalImages.map((image, index) => (
+                          <button
+                            key={image.src}
+                            type="button"
+                            onClick={() => setCurrentImageIndex(index)}
+                            aria-label={`Show screenshot ${index + 1}: ${image.label}`}
+                            aria-current={index === safeIndex ? 'true' : undefined}
+                            className={cx(
+                              'h-2 rounded-full transition-all duration-300',
+                              index === safeIndex
+                                ? 'w-6 bg-primary'
+                                : 'w-2 bg-line-strong hover:bg-fg-subtle',
+                            )}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-mono text-[11px] text-fg-subtle">
+                        {safeIndex + 1} / {imageCount}
+                      </span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="aspect-16/10 w-full lg:aspect-auto lg:flex-1" />
+              )}
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2">{selectedProject.title}</h2>
-            <p className="text-slate-600 mb-6 text-sm sm:text-base leading-relaxed">{selectedProject.description}</p>
-            
-            <div className="mb-5">
-              <p className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-3">Key Features</p>
-              <ul className="space-y-2.5">
-                {selectedProject.keyFeatures.map((feature, idx) => (
-                  <li key={idx} className="flex items-start text-sm text-slate-600">
-                    <FaCheckCircle className="text-blue-500 mt-0.5 mr-3 flex-shrink-0 text-base" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* ---------- Right: details ---------- */}
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-6 sm:p-8">
+              <header>
+                <p className="font-mono text-xs font-medium tracking-tight text-primary">
+                  {selectedProject.category}
+                </p>
+                <p className="mt-2 pr-12 font-display text-2xl font-bold text-fg sm:text-3xl">
+                  {selectedProject.title}
+                </p>
+                {selectedProject.date && (
+                  <p className="mt-1.5 font-mono text-xs text-fg-subtle">{selectedProject.date}</p>
+                )}
+              </header>
 
-            <div className="mb-8">
-              <p className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-3">Tech Stack</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedProject.techStack.map((tech, idx) => (
-                  <span key={idx} className="text-[11px] sm:text-xs font-bold text-blue-700 bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100/60 shadow-sm">
-                    {tech}
-                  </span>
+              <div className="mt-5 flex flex-wrap gap-1.5">
+                {selectedProject.techStack.map((tech) => (
+                  <Tag key={tech}>{tech}</Tag>
                 ))}
               </div>
-            </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-               <a href={selectedProject.link} target="_blank" rel="noreferrer" className="flex-1">
-                 <button className="w-full bg-blue-600 text-white py-3 rounded-full font-bold hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
-                   Live Demo
-                 </button>
-               </a>
-               <a href={selectedProject.repo} target="_blank" rel="noreferrer" className="flex-1">
-                 <button className="w-full bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-full font-bold hover:border-slate-300 hover:bg-slate-100 transition-colors duration-300 shadow-sm hover:shadow-md text-sm">
-                   Source Code
-                 </button>
-               </a>
+              <p className="mt-6 text-sm leading-relaxed text-fg-muted">
+                {selectedProject.description}
+              </p>
+
+              {selectedProject.role && (
+                <section className="mt-6">
+                  <h3 className={SECTION_LABEL}>My Role</h3>
+                  <p className="mt-2 text-sm text-fg">{selectedProject.role}</p>
+                </section>
+              )}
+
+              {selectedProject.contribution && (
+                <section className="mt-6">
+                  <h3 className={SECTION_LABEL}>My Contribution</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-fg-muted">
+                    {selectedProject.contribution}
+                  </p>
+                </section>
+              )}
+
+              <section className="mt-6">
+                <h3 className={SECTION_LABEL}>Key Features</h3>
+                <ul className="mt-3 space-y-2.5">
+                  {selectedProject.keyFeatures.map((feature) => (
+                    <li key={feature} className="flex gap-3 text-sm leading-relaxed text-fg-muted">
+                      <span
+                        aria-hidden="true"
+                        className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
+                      />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              {(selectedProject.link || selectedProject.repo) && (
+                <div className="mt-8 flex flex-col gap-3 border-t border-line pt-6 sm:flex-row">
+                  {selectedProject.repo && (
+                    <Button
+                      as="a"
+                      variant="secondary"
+                      href={selectedProject.repo}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FiGithub size={16} />
+                      Source code
+                    </Button>
+                  )}
+                  {selectedProject.link && (
+                    <Button as="a" href={selectedProject.link} target="_blank" rel="noreferrer">
+                      <FiExternalLink size={16} />
+                      Live demo
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
-          </motion.div>
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+      </Modal>
+    </Section>
   );
 };
 

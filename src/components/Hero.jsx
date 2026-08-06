@@ -1,74 +1,81 @@
-import React from 'react';
-import { HiArrowNarrowRight, HiDownload } from 'react-icons/hi';
-import { Link } from 'react-scroll';
-import { motion } from 'framer-motion'; 
 import HeroImage from '../assets/hero.png';
-import ResumePDF from '../assets/Hansi_Resume.pdf';
+import { site } from '../data/site';
+import Container from './ui/Container';
+import Reveal from './ui/Reveal';
 
-const Hero = () => {
-  return (
-    <div name="home" className="w-full h-screen bg-white flex items-center justify-center overflow-hidden">
-      <div className="max-w-[1100px] mx-auto px-8 flex flex-col md:flex-row items-center justify-between h-full gap-10 z-10">
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="flex flex-col justify-center flex-1 order-2 md:order-1"
-        >
-          <p className="text-blue-600 font-mono tracking-widest mb-2 font-semibold">Greetings, I am</p>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 cursor-default">
-            Hansi Kodamulla
-          </h1>
-          <h2 className="text-2xl sm:text-4xl font-bold text-slate-500 mt-2 leading-tight">
-            Software Engineering Undergraduate.
-          </h2>
-          <p className="text-slate-600 py-6 max-w-[700px] text-lg leading-relaxed">
-            I am currently reading for my <span className="text-slate-800 font-bold">BSc (Hons) in Software Engineering</span> at 
-            <span className="text-blue-600 font-semibold"> University of Plymouth, UK</span>. 
-            I specialize in building exceptionally digital experiences and scalable full-stack applications.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link to="projects" smooth={true} duration={500} offset={-80}>
-              <button className="text-blue-600 group border-2 border-blue-600 px-6 py-3 my-2 flex items-center hover:bg-blue-600 hover:text-white duration-300 rounded-md font-semibold shadow-sm">
-                View My Work
-                <span className="group-hover:rotate-90 duration-300">
-                  <HiArrowNarrowRight className="ml-3" />
-                </span>
-              </button>
-            </Link>
-            
-            <a href={ResumePDF} download="Hansi_Kodamulla_Resume.pdf">
-              <button className="text-slate-700 border-2 border-slate-700 px-6 py-3 my-2 flex items-center hover:bg-slate-700 hover:text-white duration-300 rounded-md font-semibold shadow-sm">
-                Get Resume <HiDownload className="ml-3" />
-              </button>
-            </a>
-          </div>
-        </motion.div>
-
-        {/* 👇 රවුම ඇතුළේ පින්තූරය තියෙන කොටස */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="order-1 md:order-2 flex justify-center items-center mt-20 md:mt-0 flex-1 w-full"
-        >
-          {/* overflow-hidden නිසා මේ රවුමෙන් එළියට යන යට කොටස කැපිලා යනවා */}
-          <div className="w-[280px] h-[280px] sm:w-[350px] sm:h-[350px] lg:w-[400px] lg:h-[400px] rounded-full overflow-hidden shadow-2xl border-4 border-slate-50 bg-slate-50">
-            <img 
-              src={HeroImage} 
-              alt="Hansi" 
-              // object-top මගින් මුහුණ හරියටම මැදින් තියාගන්නවා
-              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-        </motion.div>
-      </div>
-      
-      {/* පිටුපස තියෙන Background blurs ටික */}
-      <div className="absolute top-[10%] right-[10%] w-64 h-64 bg-blue-100 blur-[100px] rounded-full z-0"></div>
-      <div className="absolute bottom-[10%] left-[10%] w-64 h-64 bg-purple-100 blur-[100px] rounded-full z-0"></div>
+const Hero = () => (
+  <section
+    id="home"
+    className="relative flex min-h-dvh scroll-mt-20 items-center overflow-hidden pt-28 pb-20 sm:pt-32 lg:pt-32 lg:pb-24"
+  >
+    {/* One soft tint behind the portrait — enough to give the page depth
+        without turning the hero into a gradient. */}
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute top-[-10%] right-[-5%] h-[420px] w-[420px] rounded-full bg-primary/8 blur-[120px]" />
     </div>
-  );
-};
+
+    <Container className="relative">
+      <div className="grid items-center gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
+        <div className="order-2 lg:order-1">
+          <Reveal
+            as="p"
+            className="mb-5 flex items-center gap-2 font-mono text-sm font-medium tracking-[0.14em] text-primary uppercase"
+          >
+            <span aria-hidden="true" className="h-px w-6 bg-primary/50" />
+            Greetings, I am
+          </Reveal>
+
+          <Reveal
+            as="h1"
+            delay={0.05}
+            className="text-4xl leading-[1.08] font-bold text-fg sm:text-5xl lg:text-6xl"
+          >
+            {site.name}
+          </Reveal>
+
+          <Reveal
+            as="p"
+            delay={0.1}
+            className="mt-4 font-display text-lg font-semibold text-fg-muted sm:text-xl lg:text-2xl"
+          >
+            {site.role}
+          </Reveal>
+
+          <Reveal
+            as="p"
+            delay={0.15}
+            className="mt-7 max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg"
+          >
+            I build full-stack web applications end to end — from considered, accessible interfaces
+            through to secure APIs and the data models beneath them. Currently completing my{' '}
+            <span className="font-semibold text-fg">BSc (Hons) in Software Engineering</span> at the{' '}
+            <span className="font-semibold text-fg">University of Plymouth, UK</span>, I care as much
+            about how a product feels to use as how cleanly it is engineered, and I am drawn to
+            problems where thoughtful architecture makes a real difference.
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.1} className="order-1 flex justify-center lg:order-2 lg:justify-end">
+          <div className="relative">
+            <div aria-hidden="true" className="absolute -inset-4 rounded-full border border-line" />
+            {/* White panel so the portrait reads as a bright, deliberate object
+                against the dark page rather than fading into it. */}
+            <div className="relative rounded-full bg-white p-2.5 shadow-lift">
+              <div className="h-52 w-52 overflow-hidden rounded-full bg-white sm:h-64 sm:w-64 lg:h-72 lg:w-72">
+                <img
+                  src={HeroImage}
+                  alt={site.name}
+                  width={397}
+                  height={542}
+                  className="h-full w-full object-cover object-top"
+                />
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </Container>
+  </section>
+);
 
 export default Hero;
