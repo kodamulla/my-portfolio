@@ -42,22 +42,23 @@ const Hero = () => (
           </Reveal>
 
           <Reveal
-            as="p"
-            delay={0.15}
-            className="mt-7 max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg"
-          >
-            I build full-stack web applications end to end — from considered, accessible interfaces
-            through to secure APIs and the data models beneath them. Currently completing my{' '}
-            <span className="font-semibold text-fg">BSc (Hons) in Software Engineering</span> at the{' '}
-            <span className="font-semibold text-fg">University of Plymouth, UK</span>, I care as much
-            about how a product feels to use as how cleanly it is engineered, and I am drawn to
-            problems where thoughtful architecture makes a real difference.
-          </Reveal>
+  as="p"
+  delay={0.15}
+  className="mt-7 max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg"
+>
+  I build secure and scalable full-stack web applications using the{' '}
+  <span className="font-semibold text-fg">MERN Stack</span>. Currently completing my{' '}
+  <span className="font-semibold text-fg">BSc (Hons) in Software Engineering</span> at the{' '}
+  <span className="font-semibold text-fg">University of Plymouth, UK</span>. Passionate about
+  developing user-focused digital solutions, solving real-world problems, and continuously
+  improving my skills in modern software engineering and web development.
+</Reveal>
         </div>
 
         <Reveal delay={0.1} className="order-1 flex justify-center lg:order-2 lg:justify-end">
           <div className="relative">
             <div aria-hidden="true" className="absolute -inset-4 rounded-full border border-line" />
+
             {/* White panel so the portrait reads as a bright, deliberate object
                 against the dark page rather than fading into it. */}
             <div className="relative rounded-full bg-white p-2.5 shadow-lift">

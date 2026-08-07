@@ -6,9 +6,9 @@ import Card from './ui/Card';
 import Reveal from './ui/Reveal';
 
 const highlights = [
-  { title: 'Full-Stack', caption: 'Developer' },
+  { title: 'Full-Stack', caption: 'Development' },
   { title: 'MERN Stack', caption: 'Specialized' },
-  { title: 'UI / UX', caption: 'Enthusiast' },
+  { title: 'Backend', caption: 'APIs & Security' },
 ];
 
 /**
@@ -49,33 +49,38 @@ const About = () => (
     <SectionHeading
       eyebrow="About"
       title="About me"
-      
     />
 
-    <div className="mt-14 grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+    <div className="mt-12 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-12">
       <div>
-       
-
         <Reveal delay={0.06}>
-          <p className="mt-6 text-base leading-relaxed text-fg-muted sm:text-lg">
-           I’m a Software Engineering undergraduate and Full Stack Developer who enjoys turning ideas into complete, usable applications.
-
-My main focus is MERN Stack development, where I work across the full application flow from responsive React interfaces to secure Node.js and Express APIs, MongoDB data models, authentication, validation, and role-based access control. I enjoy understanding how every layer connects and building systems that are both easy to use and maintain.
-
-I also use AI assistants as part of my development workflow to support research, debugging, code review, documentation, and faster problem-solving. I treat AI as a productivity tool rather than a replacement for engineering judgment, and I always review and validate the final implementation.
-
-What I value most is creating software that solves a real problem. Whether I am improving a user interface, designing an API, securing protected routes, managing application data, or troubleshooting deployment issues, I approach each task with attention to clarity, reliability, and long-term maintainability.
+          <p className="mt-4 max-w-[680px] text-base leading-relaxed text-fg-muted sm:text-lg">
+            I’m a Software Engineering undergraduate and Full Stack Developer focused on building
+            secure, responsive, and maintainable web applications. My main focus is{' '}
+            <span className="font-semibold text-fg">MERN Stack development</span>, working across
+            responsive React interfaces, Node.js and Express APIs, MongoDB data models,
+            authentication, validation, and role-based access control.
+            <br />
+            <br />
+            I enjoy understanding how each layer of an application connects and turning ideas into
+            practical solutions that are easy to use and maintain. I also use modern development
+            tools and AI assistants to support research, debugging, documentation, and code review
+            while always validating the final implementation.
+            <br />
+            <br />
+            My goal is to build software that solves real problems with a strong focus on clarity,
+            reliability, security, and long-term maintainability.
           </p>
         </Reveal>
 
-        
-
-        <ul className="mt-9 grid gap-3 sm:grid-cols-3">
+        <ul className="mt-10 grid gap-3 sm:grid-cols-3">
           {highlights.map(({ title, caption }, index) => (
             <li key={title} className="flex">
               <Reveal delay={0.16 + index * 0.06} className="flex w-full">
                 <Card className="flex w-full flex-col justify-center px-4 py-4">
-                  <p className="font-display text-base font-semibold text-fg">{title}</p>
+                  <p className="font-display text-base font-semibold text-fg">
+                    {title}
+                  </p>
                   <p className="mt-1 font-mono text-[11px] tracking-tight text-fg-subtle">
                     {caption}
                   </p>
@@ -104,25 +109,32 @@ What I value most is creating software that solves a real problem. Whether I am 
                   <p className="font-display text-base font-semibold text-fg">
                     {entry.institution}
                   </p>
-                  <p className="mt-0.5 text-sm text-primary">{entry.qualification}</p>
+
+                  <p className="mt-0.5 text-sm text-primary">
+                    {entry.qualification}
+                  </p>
+
                   {entry.period && (
                     <p className="mt-1 font-mono text-[11px] tracking-tight text-fg-subtle">
                       {entry.period}
                     </p>
                   )}
+
                   {entry.detail && (
-                    <p className="mt-2 text-sm leading-relaxed text-fg-muted">{entry.detail}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-fg-muted">
+                      {entry.detail}
+                    </p>
                   )}
                 </div>
               </li>
             ))}
           </ul>
 
-          {/* A labelled fact, deliberately not styled as a badge or award. */}
           <div className="mt-6 flex items-baseline justify-between gap-4 rounded-lg border border-line bg-bg-subtle px-4 py-3.5">
             <span className="font-mono text-[11px] tracking-[0.14em] text-fg-subtle uppercase">
               {academicPerformance.label}
             </span>
+
             <span className="font-display text-sm font-semibold text-fg">
               {academicPerformance.value}
             </span>

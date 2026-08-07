@@ -111,7 +111,7 @@ export const projects = [
   ],
 
   link: null,
-  repo: null
+  repo:" https://github.com/kodamulla/velvet-co.git",
 },
   {
     id: 'tradez-voting-dapp',
@@ -164,7 +164,7 @@ export const projects = [
       'Verifiable voting transactions',
     ],
     link: null,
-    repo: null,
+    repo:"https://github.com/kodamulla/tradez-voting-dapp.git",
   },
   {
     id: 'flavor-town',
@@ -267,7 +267,7 @@ export const projects = [
       'Responsive interface',
     ],
     link: null,
-    repo: null,
+    repo: "https://github.com/kodamulla/i-computers-frontend.git",
   },
   {
     id: 'furniture-studio',
