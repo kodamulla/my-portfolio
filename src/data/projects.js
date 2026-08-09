@@ -110,7 +110,7 @@ export const projects = [
    
   ],
 
-  link: null,
+  link: "https://velvet-co.vercel.app",
   repo:" https://github.com/kodamulla/velvet-co.git",
 },
   {
